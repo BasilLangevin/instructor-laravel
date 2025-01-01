@@ -2,9 +2,9 @@
 
 namespace BasilLangevin\Instructor\Tests;
 
+use BasilLangevin\Instructor\InstructorServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use BasilLangevin\Instructor\InstructorServiceProvider;
 
 class TestCase extends Orchestra
 {

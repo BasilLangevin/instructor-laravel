@@ -2,9 +2,9 @@
 
 namespace BasilLangevin\Instructor;
 
+use BasilLangevin\Instructor\Commands\InstructorCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use BasilLangevin\Instructor\Commands\InstructorCommand;
 
 class InstructorServiceProvider extends PackageServiceProvider
 {
