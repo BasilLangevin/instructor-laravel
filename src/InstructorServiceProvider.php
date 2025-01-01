@@ -2,7 +2,6 @@
 
 namespace BasilLangevin\Instructor;
 
-use BasilLangevin\Instructor\Commands\InstructorCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\File;
 use BasilLangevin\Instructor\InstructorServiceProvider;
+use Illuminate\Support\Facades\File;
 
 it('publishes the config file', function () {
     $this->assertFileDoesNotExist(config_path('instructor.php'));
