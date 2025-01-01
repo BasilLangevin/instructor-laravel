@@ -8,12 +8,12 @@ class ResolvesClosuresTester
 
     public static function call($value)
     {
-        return (new self())->resolve($value);
+        return (new self)->resolve($value);
     }
 }
 
 it('resolves closures', function () {
-    expect(ResolvesClosuresTester::call(fn() => 'Hello, world!'))->toEqual('Hello, world!');
+    expect(ResolvesClosuresTester::call(fn () => 'Hello, world!'))->toEqual('Hello, world!');
 });
 
 it('returns the value if it is not a closure', function ($value) {

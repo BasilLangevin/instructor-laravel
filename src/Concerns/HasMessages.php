@@ -101,7 +101,7 @@ trait HasMessages
     public function resolveMessages(): Collection
     {
         return collect($this->resolve($this->messages))
-            ->map(fn($message) => $this->resolveMessage($message));
+            ->map(fn ($message) => $this->resolveMessage($message));
     }
 
     /**
