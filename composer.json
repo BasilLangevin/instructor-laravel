@@ -36,8 +36,7 @@
     },
     "autoload": {
         "psr-4": {
-            "BasilLangevin\\InstructorLaravel\\": "src/",
-            "BasilLangevin\\InstructorLaravel\\Database\\Factories\\": "database/factories/"
+            "BasilLangevin\\InstructorLaravel\\": "src/"
         }
     },
     "autoload-dev": {
