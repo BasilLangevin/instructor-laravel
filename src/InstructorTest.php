@@ -39,7 +39,7 @@ it('can pass method calls to the underlying Prism instance', function () {
 });
 
 describe('withSchema', function () {
-    it('set the schema to a Data class', function () {
+    it('can set the schema to a Data class', function () {
         $this->instructor->withSchema(BirdData::class);
 
         expect(call_user_func($this->getSchema))
@@ -48,22 +48,13 @@ describe('withSchema', function () {
             ->toEqual(JsonSchema::toArray(BirdData::class));
     });
 
-    it('can set the schema to an array', function () {
-        $this->instructor->withSchema(['type' => 'object']);
+    it('sets the internal schema property to the provided Data class', function () {
+        $this->instructor->withSchema(BirdData::class);
 
-        expect(call_user_func($this->getSchema))
-            ->toBeInstanceOf(SchemaAdapter::class)
-            ->toArray()
-            ->toEqual(['type' => 'object']);
-    });
+        $reflection = new ReflectionClass($this->instructor);
+        $property = $reflection->getProperty('schema');
+        $property->setAccessible(true);
 
-    it('can set the schema to a Schema object', function () {
-        $schema = JsonSchema::make(BirdData::class);
-        $this->instructor->withSchema($schema);
-
-        expect(call_user_func($this->getSchema))
-            ->toBeInstanceOf(SchemaAdapter::class)
-            ->toArray()
-            ->toEqual(JsonSchema::toArray(BirdData::class));
+        expect($property->getValue($this->instructor))->toBe(BirdData::class);
     });
 });

@@ -2,12 +2,14 @@
 
 namespace BasilLangevin\InstructorLaravel;
 
-use BasilLangevin\LaravelDataJsonSchemas\Schemas\Contracts\Schema;
 use EchoLabs\Prism\Structured\PendingRequest;
 use Spatie\LaravelData\Data;
 
 class Instructor
 {
+    /** @var class-string<Data> */
+    protected string $schema;
+
     public function __construct(
         protected PendingRequest $request,
     ) {}
@@ -17,9 +19,11 @@ class Instructor
         return app(Instructor::class);
     }
 
-    /** @param  class-string<Data>|array<string, mixed>|Schema  $schema */
-    public function withSchema(string|array|Schema $schema): self
+    /** @param  class-string<Data>  $schema */
+    public function withSchema(string $schema): self
     {
+        $this->schema = $schema;
+
         $this->request->withSchema(SchemaAdapter::make($schema));
 
         return $this;
