@@ -2,11 +2,15 @@
 
 namespace BasilLangevin\InstructorLaravel;
 
+use BasilLangevin\InstructorLaravel\Concerns\ConfiguresProvider;
 use EchoLabs\Prism\Structured\PendingRequest;
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
 class Instructor
 {
+    use ConfiguresProvider;
+
     /** @var class-string<Data> */
     protected string $schema;
 
@@ -27,6 +31,17 @@ class Instructor
         $this->request->withSchema(SchemaAdapter::make($schema));
 
         return $this;
+    }
+
+    /**
+     * @return Data|Collection<int, Data>
+     */
+    public function generate(): Data|Collection
+    {
+        $this->ensureProviderIsSet();
+
+        /** @var Collection<int, Data> */
+        return collect();
     }
 
     /**
