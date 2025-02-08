@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "basillangevin/instructor-laravel",
+    "description": "Structured outputs for LLMs using Spatie Data objects.",
     "keywords": [
-        ":vendor_name",
+        "BasilLangevin",
         "laravel",
-        ":package_slug"
+        "instructor-laravel"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/basillangevin/instructor-laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "BasilLangevin",
+            "email": "basil.langevin@gmail.com",
             "role": "Developer"
         }
     ],
@@ -30,18 +30,17 @@
         "pestphp/pest-plugin-laravel": "^3.0",
         "phpstan/extension-installer": "^1.3",
         "phpstan/phpstan-deprecation-rules": "^1.1",
-        "phpstan/phpstan-phpunit": "^1.3",
-        "spatie/laravel-ray": "^1.35"
+        "phpstan/phpstan-phpunit": "^1.3"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "BasilLangevin\\InstructorLaravel\\": "src/",
+            "BasilLangevin\\InstructorLaravel\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "BasilLangevin\\InstructorLaravel\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +62,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "BasilLangevin\\InstructorLaravel\\InstructorLaravelServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "InstructorLaravel": "BasilLangevin\\InstructorLaravel\\Facades\\InstructorLaravel"
             }
         }
     },
