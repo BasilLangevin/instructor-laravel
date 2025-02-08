@@ -2,9 +2,9 @@
 
 namespace BasilLangevin\InstructorLaravel;
 
+use BasilLangevin\InstructorLaravel\Commands\InstructorLaravelCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use BasilLangevin\InstructorLaravel\Commands\InstructorLaravelCommand;
 
 class InstructorLaravelServiceProvider extends PackageServiceProvider
 {
@@ -17,7 +17,7 @@ class InstructorLaravelServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('instructor-laravel')
-            ->hasConfigFile()
+            ->hasConfigFile('instructor')
             ->hasViews()
             ->hasMigration('create_instructor_laravel_table')
             ->hasCommand(InstructorLaravelCommand::class);
