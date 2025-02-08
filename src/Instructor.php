@@ -2,4 +2,4 @@
 
 namespace BasilLangevin\InstructorLaravel;
 
-class InstructorLaravel {}
+class Instructor {}

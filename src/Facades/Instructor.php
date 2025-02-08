@@ -5,12 +5,12 @@ namespace BasilLangevin\InstructorLaravel\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \BasilLangevin\InstructorLaravel\InstructorLaravel
+ * @see \BasilLangevin\InstructorLaravel\Instructor
  */
-class InstructorLaravel extends Facade
+class Instructor extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \BasilLangevin\InstructorLaravel\InstructorLaravel::class;
+        return \BasilLangevin\InstructorLaravel\Instructor::class;
     }
 }
