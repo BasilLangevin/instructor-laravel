@@ -2,9 +2,9 @@
 
 namespace BasilLangevin\InstructorLaravel\Tests;
 
+use BasilLangevin\InstructorLaravel\InstructorLaravelServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use BasilLangevin\InstructorLaravel\InstructorLaravelServiceProvider;
 
 class TestCase extends Orchestra
 {
