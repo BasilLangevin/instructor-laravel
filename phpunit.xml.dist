@@ -16,8 +16,9 @@
     backupStaticProperties="false"
 >
     <testsuites>
-        <testsuite name="BasilLangevin Test Suite">
+        <testsuite name="InstructorLaravel Test Suite">
             <directory>tests</directory>
+            <directory suffix="Test.php">src</directory>
         </testsuite>
     </testsuites>
     <logging>
@@ -27,5 +28,8 @@
         <include>
             <directory suffix=".php">./src</directory>
         </include>
+        <exclude>
+            <directory suffix="Test.php">./src</directory>
+        </exclude>
     </source>
 </phpunit>
