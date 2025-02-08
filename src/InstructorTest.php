@@ -4,6 +4,7 @@ use BasilLangevin\InstructorLaravel\Facades\Instructor as InstructorFacade;
 use BasilLangevin\InstructorLaravel\Instructor;
 use BasilLangevin\InstructorLaravel\SchemaAdapter;
 use BasilLangevin\InstructorLaravel\Tests\Support\Data\BirdData;
+use BasilLangevin\InstructorLaravel\Tests\Support\Facades\ResponseBuilder;
 use BasilLangevin\LaravelDataJsonSchemas\Facades\JsonSchema;
 
 covers(Instructor::class);
@@ -56,5 +57,18 @@ describe('withSchema', function () {
         $property->setAccessible(true);
 
         expect($property->getValue($this->instructor))->toBe(BirdData::class);
+    });
+});
+
+describe('generate', function () {
+    it('can generate a response from the provided schema', function () {
+        ResponseBuilder::fake(['species' => 'Barred Owl']);
+
+        $this->instructor->withSchema(BirdData::class);
+
+        $result = $this->instructor->generate();
+
+        expect($result)->toBeInstanceOf(BirdData::class);
+        expect($result->species)->toBe('Barred Owl');
     });
 });

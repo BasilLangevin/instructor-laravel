@@ -40,8 +40,9 @@ class Instructor
     {
         $this->ensureProviderIsSet();
 
-        /** @var Collection<int, Data> */
-        return collect();
+        $response = $this->request->generate();
+
+        return $this->schema::from($response->structured);
     }
 
     /**
