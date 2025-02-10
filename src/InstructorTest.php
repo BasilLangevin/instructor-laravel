@@ -1,5 +1,6 @@
 <?php
 
+use BasilLangevin\InstructorLaravel\Exceptions\SchemaValidationException;
 use BasilLangevin\InstructorLaravel\Facades\Instructor as InstructorFacade;
 use BasilLangevin\InstructorLaravel\Instructor;
 use BasilLangevin\InstructorLaravel\SchemaAdapter;
@@ -58,6 +59,19 @@ describe('withSchema', function () {
 
         expect($property->getValue($this->instructor))->toBe(BirdData::class);
     });
+
+    it('sets the internal adapter property to a SchemaAdapter instance', function () {
+        $this->instructor->withSchema(BirdData::class);
+
+        $reflection = new ReflectionClass($this->instructor);
+        $property = $reflection->getProperty('adapter');
+        $property->setAccessible(true);
+
+        expect($property->getValue($this->instructor))
+            ->toBeInstanceOf(SchemaAdapter::class)
+            ->toArray()
+            ->toEqual(JsonSchema::toArray(BirdData::class));
+    });
 });
 
 describe('generate', function () {
@@ -71,4 +85,12 @@ describe('generate', function () {
         expect($result)->toBeInstanceOf(BirdData::class);
         expect($result->species)->toBe('Barred Owl');
     });
+
+    it('validates the response against the schema', function () {
+        ResponseBuilder::fake(['weight_in_grams' => 457]);
+
+        $this->instructor->withSchema(BirdData::class);
+
+        $this->instructor->generate();
+    })->throws(SchemaValidationException::class);
 });
