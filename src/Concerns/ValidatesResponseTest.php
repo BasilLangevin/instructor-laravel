@@ -24,9 +24,9 @@ beforeEach(function () {
 it('can validate a response that does not match the schema', function () {
     ResponseBuilder::fake(['weight_in_grams' => 457]);
 
-    $this->instructor->withSchema(BirdData::class);
-
-    $this->instructor->generate();
+    $this->instructor->withSchema(BirdData::class)
+        ->withoutRetries()
+        ->generate();
 })->throws(JsonSchemaValidationException::class);
 
 it('can validate a response that does not match the Laravel Data attributes', function () {
@@ -41,7 +41,7 @@ it('can validate a response that does not match the Laravel Data attributes', fu
 
     ResponseBuilder::fake(['age' => 101]);
 
-    $this->instructor->withSchema(LaravelValidatedAttributeData::class);
-
-    $this->instructor->generate();
+    $this->instructor->withSchema(LaravelValidatedAttributeData::class)
+        ->withoutRetries()
+        ->generate();
 })->throws(LaravelDataValidationException::class);

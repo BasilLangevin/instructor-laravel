@@ -3,7 +3,11 @@
 namespace BasilLangevin\InstructorLaravel\Concerns;
 
 use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Structured\PendingRequest;
 
+/**
+ * @property PendingRequest $request
+ */
 trait ConfiguresProvider
 {
     /**

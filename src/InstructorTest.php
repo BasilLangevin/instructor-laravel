@@ -31,10 +31,10 @@ it('can be created via its facade')
     ->toBeInstanceOf(Instructor::class);
 
 it('can pass method calls to the underlying Prism instance', function () {
-    $this->instructor->withPrompt('Hello, world!');
+    $this->instructor->withSystemPrompt('Hello, world!');
 
     $reflection = new ReflectionClass($this->request);
-    $property = $reflection->getProperty('prompt');
+    $property = $reflection->getProperty('systemPrompt');
     $property->setAccessible(true);
 
     expect($property->getValue($this->request))->toBe('Hello, world!');
@@ -89,8 +89,36 @@ describe('generate', function () {
     it('validates the response against the schema', function () {
         ResponseBuilder::fake(['weight_in_grams' => 457]);
 
-        $this->instructor->withSchema(BirdData::class);
+        $this->instructor->withSchema(BirdData::class)->withoutRetries();
 
         $this->instructor->generate();
     })->throws(SchemaValidationException::class);
+
+    it('adds retry messages when a schema validation exception occurs', function () {
+        ResponseBuilder::fake(['weight_in_grams' => 457]);
+
+        $this->instructor->withSchema(BirdData::class)->withoutRetries();
+
+        expect(fn () => $this->instructor->generate())
+            ->toThrow(SchemaValidationException::class);
+
+        $reflection = new ReflectionClass($this->instructor);
+        $property = $reflection->getProperty('messages');
+        $property->setAccessible(true);
+
+        $messages = $property->getValue($this->instructor);
+
+        expect($messages)->toHaveCount(2);
+
+        $assistantMessage = $messages->first();
+        $userMessage = $messages->last();
+
+        expect(json_decode($assistantMessage->content, true))->toEqual([
+            'weight_in_grams' => 457,
+        ]);
+
+        expect($userMessage->text())->toEqual(
+            __('instructor-laravel::translations.retry_message', ['errors' => '{"/":["The required properties (species) are missing","Additional object properties are not allowed: weight_in_grams"]}'])
+        );
+    });
 });

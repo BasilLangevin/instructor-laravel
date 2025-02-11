@@ -12,7 +12,8 @@ class InstructorLaravelServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('instructor-laravel')
-            ->hasConfigFile('instructor');
+            ->hasConfigFile('instructor')
+            ->hasTranslations();
     }
 
     public function registeringPackage(): void

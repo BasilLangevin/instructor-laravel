@@ -3,16 +3,21 @@
 namespace BasilLangevin\InstructorLaravel;
 
 use BasilLangevin\InstructorLaravel\Concerns\ConfiguresProvider;
+use BasilLangevin\InstructorLaravel\Concerns\InitializesTraits;
+use BasilLangevin\InstructorLaravel\Concerns\ManagesMessages;
+use BasilLangevin\InstructorLaravel\Concerns\RetriesRequest;
 use BasilLangevin\InstructorLaravel\Concerns\ValidatesResponse;
+use BasilLangevin\InstructorLaravel\Exceptions\SchemaValidationException;
 use EchoLabs\Prism\Structured\PendingRequest;
 use Illuminate\Support\Collection;
-use Opis\JsonSchema\Errors\ErrorFormatter;
-use Opis\JsonSchema\Validator as SchemaValidator;
 use Spatie\LaravelData\Data;
 
 class Instructor
 {
     use ConfiguresProvider;
+    use InitializesTraits;
+    use ManagesMessages;
+    use RetriesRequest;
     use ValidatesResponse;
 
     /** @var class-string<Data> */
@@ -22,9 +27,9 @@ class Instructor
 
     public function __construct(
         protected PendingRequest $request,
-        protected SchemaValidator $schemaValidator,
-        protected ErrorFormatter $errorFormatter,
-    ) {}
+    ) {
+        $this->initializeTraits();
+    }
 
     public static function make(): self
     {
@@ -49,11 +54,18 @@ class Instructor
     {
         $this->ensureProviderIsSet();
 
-        $response = $this->request->generate();
+        return $this->retry(function () {
+            $response = $this->request->generate();
 
-        $this->validateResponse($response);
+            try {
+                $this->validateResponse($response);
+            } catch (SchemaValidationException $e) {
+                $this->addRetryMessages($response, $e);
+                throw $e;
+            }
 
-        return $this->schema::from($response->structured);
+            return $this->schema::from($response->structured);
+        });
     }
 
     /**

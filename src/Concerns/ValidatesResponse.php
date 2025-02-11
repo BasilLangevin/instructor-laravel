@@ -5,11 +5,15 @@ namespace BasilLangevin\InstructorLaravel\Concerns;
 use BasilLangevin\InstructorLaravel\Exceptions\JsonSchemaValidationException;
 use BasilLangevin\InstructorLaravel\Exceptions\LaravelDataValidationException;
 use BasilLangevin\InstructorLaravel\Exceptions\SchemaValidationException;
+use EchoLabs\Prism\Structured\PendingRequest;
 use EchoLabs\Prism\Structured\Response;
 use Illuminate\Validation\ValidationException;
 use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Validator;
 
+/**
+ * @property PendingRequest $request
+ */
 trait ValidatesResponse
 {
     /**

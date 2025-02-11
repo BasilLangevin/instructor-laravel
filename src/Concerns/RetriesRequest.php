@@ -2,6 +2,12 @@
 
 namespace BasilLangevin\InstructorLaravel\Concerns;
 
+use BasilLangevin\InstructorLaravel\Services\RetryService;
+use EchoLabs\Prism\Structured\PendingRequest;
+
+/**
+ * @property PendingRequest $request
+ */
 trait RetriesRequest
 {
     /** @var int|array<int, int> */
@@ -13,16 +19,30 @@ trait RetriesRequest
     /** @var (callable(\Throwable): bool)|null */
     protected $when = null;
 
+    protected RetryService $retryService;
+
+    protected function initializeRetriesRequest(): void
+    {
+        $this->retryService = app(RetryService::class);
+    }
+
     /**
      * @param  int|array<int, int>  $times
      * @param  int|\Closure(int, \Throwable): int  $sleepMilliseconds
      * @param  (callable(\Throwable): bool)|null  $when
      */
-    public function withRetry($times = 3, $sleepMilliseconds = 0, ?callable $when = null): static
+    public function withRetries($times = 3, $sleepMilliseconds = 0, ?callable $when = null): static
     {
         $this->times = $times;
         $this->sleepMilliseconds = $sleepMilliseconds;
         $this->when = $when;
+
+        return $this;
+    }
+
+    public function withoutRetries(): static
+    {
+        $this->times = 1;
 
         return $this;
     }
@@ -35,6 +55,6 @@ trait RetriesRequest
      */
     protected function retry(callable $callback)
     {
-        return retry($this->times, $callback, $this->sleepMilliseconds, $this->when);
+        return $this->retryService->retry($this->times, $callback, $this->sleepMilliseconds, $this->when);
     }
 }
