@@ -3,73 +3,39 @@
 use BasilLangevin\InstructorLaravel\Concerns\RetriesRequest;
 use BasilLangevin\InstructorLaravel\Facades\Instructor;
 use BasilLangevin\InstructorLaravel\Services\RetryService;
+use BasilLangevin\InstructorLaravel\Tests\Support\Data\BirdData;
 
 covers(RetriesRequest::class);
 
-it('can set the retry configuration', function () {
-    $instructor = Instructor::make();
+it('sets the retry configuration and adds one retry to the times integer parameter', function () {
+    $this->mock(RetryService::class)->shouldReceive('retry')->once()
+        ->with(12, Mockery::type('Closure'), 800, Mockery::type('Closure'))
+        ->andReturn(BirdData::from(['species' => 'Belted Kingfisher']));
 
-    $instructor->withRetries(3, 1000, fn () => null);
+    Instructor::make()
+        ->withSchema(BirdData::class)
+        ->withRetries(11, 800, fn () => true)
+        ->generate();
+});
 
-    $reflection = new ReflectionClass($instructor);
-    $times = $reflection->getProperty('times');
-    $times->setAccessible(true);
+it('sets the retry configuration and adds an initial delay to an array of retry sleeps', function () {
+    $this->mock(RetryService::class)->shouldReceive('retry')->once()
+        ->with([100, 100, 200], Mockery::type('Closure'), 0, null)
+        ->andReturn(BirdData::from(['species' => 'Downy Woodpecker']));
 
-    expect($times->getValue($instructor))->toBe(3);
-
-    $sleepMilliseconds = $reflection->getProperty('sleepMilliseconds');
-    $sleepMilliseconds->setAccessible(true);
-
-    expect($sleepMilliseconds->getValue($instructor))->toBe(1000);
-
-    $when = $reflection->getProperty('when');
-    $when->setAccessible(true);
-
-    expect($when->getValue($instructor))->toBeInstanceOf(Closure::class);
+    Instructor::make()
+        ->withSchema(BirdData::class)
+        ->withRetries([100, 200])
+        ->generate();
 });
 
 it('can disable retries', function () {
-    $instructor = Instructor::make();
-
-    $instructor->withoutRetries();
-
-    $reflection = new ReflectionClass($instructor);
-    $times = $reflection->getProperty('times');
-    $times->setAccessible(true);
-
-    expect($times->getValue($instructor))->toBe(1);
-});
-
-it('can retry a callback', function () {
     $this->mock(RetryService::class)->shouldReceive('retry')->once()
-        ->with(3, Mockery::type('Closure'), 0, null)
-        ->andReturn('Hello, world!');
+        ->with(1, Mockery::type('Closure'), 0, null)
+        ->andReturn(BirdData::from(['species' => 'Anna\'s Hummingbird']));
 
-    $instructor = Instructor::make();
-
-    $reflection = new ReflectionClass($instructor);
-    $method = $reflection->getMethod('retry');
-    $method->setAccessible(true);
-
-    $result = $method->invoke($instructor, fn () => 'Hello, world!');
-
-    expect($result)->toBe('Hello, world!');
-});
-
-test('retry passes the correct arguments to the retry service', function () {
-    $this->mock(RetryService::class)->shouldReceive('retry')->once()
-        ->with(12, Mockery::type('Closure'), 800, Mockery::type('Closure'))
-        ->andReturn('Hello, world!');
-
-    $instructor = Instructor::make();
-
-    $instructor->withRetries(12, 800, fn () => true);
-
-    $reflection = new ReflectionClass($instructor);
-    $method = $reflection->getMethod('retry');
-    $method->setAccessible(true);
-
-    $result = $method->invoke($instructor, fn () => 'Hello, world!');
-
-    expect($result)->toBe('Hello, world!');
+    Instructor::make()
+        ->withSchema(BirdData::class)
+        ->withoutRetries()
+        ->generate();
 });

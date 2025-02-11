@@ -11,7 +11,7 @@ beforeEach(function () {
 });
 
 it('can add a user message', function () {
-    $this->collection->addUserMessage('Hello, world!');
+    $this->collection->addUserMessage('What species is this bird?');
 
     expect($this->collection)
         ->count()->toBe(2)
@@ -19,7 +19,7 @@ it('can add a user message', function () {
 });
 
 it('can add a user message with the user method', function () {
-    $this->collection->user('Hello, world!');
+    $this->collection->user('What species is this bird?');
 
     expect($this->collection)
         ->count()->toBe(2)
@@ -27,7 +27,7 @@ it('can add a user message with the user method', function () {
 });
 
 it('can add an assistant message', function () {
-    $this->collection->addAssistantMessage('Hello, world!');
+    $this->collection->addAssistantMessage('What species is this bird?');
 
     expect($this->collection)
         ->count()->toBe(2)
@@ -35,7 +35,7 @@ it('can add an assistant message', function () {
 });
 
 it('can add an assistant message with the assistant method', function () {
-    $this->collection->assistant('Hello, world!');
+    $this->collection->assistant('What species is this bird?');
 
     expect($this->collection)
         ->count()->toBe(2)

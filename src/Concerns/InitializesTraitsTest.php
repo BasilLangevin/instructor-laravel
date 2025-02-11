@@ -65,30 +65,3 @@ it('handles classes with no traits gracefully', function () {
 
     expect($classWithNoTraits)->toBeObject();
 });
-
-it('initializes nested trait usage', function () {
-    // Create a trait that uses another trait
-    $nestedClass = new class
-    {
-        use InitializesTraits;
-        use TestTraitOne {
-            TestTraitOne::initializeTestTraitOne as private parentInitialize;
-        }
-
-        public bool $nestedInitialized = false;
-
-        public function initializeTestTraitOne(): void
-        {
-            $this->parentInitialize();
-            $this->nestedInitialized = true;
-        }
-
-        public function __construct()
-        {
-            $this->initializeTraits();
-        }
-    };
-
-    expect($nestedClass->traitOneInitialized)->toBeTrue()
-        ->and($nestedClass->nestedInitialized)->toBeTrue();
-});

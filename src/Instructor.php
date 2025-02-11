@@ -73,6 +73,12 @@ class Instructor
      */
     public function __call(mixed $method, mixed $arguments): mixed
     {
-        return $this->request->$method(...$arguments);
+        $result = $this->request->$method(...$arguments);
+
+        if ($result === $this->request) {
+            return $this;
+        }
+
+        return $result;
     }
 }

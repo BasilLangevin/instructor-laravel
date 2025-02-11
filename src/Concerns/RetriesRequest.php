@@ -42,7 +42,7 @@ trait RetriesRequest
 
     public function withoutRetries(): static
     {
-        $this->times = 1;
+        $this->times = 0;
 
         return $this;
     }
@@ -55,6 +55,10 @@ trait RetriesRequest
      */
     protected function retry(callable $callback)
     {
-        return $this->retryService->retry($this->times, $callback, $this->sleepMilliseconds, $this->when);
+        $times = is_int($this->times)
+            ? $this->times + 1
+            : [$this->times[0], ...$this->times];
+
+        return $this->retryService->retry($times, $callback, $this->sleepMilliseconds, $this->when);
     }
 }

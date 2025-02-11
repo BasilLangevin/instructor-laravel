@@ -3,28 +3,18 @@
 use BasilLangevin\InstructorLaravel\Concerns\ValidatesResponse;
 use BasilLangevin\InstructorLaravel\Exceptions\JsonSchemaValidationException;
 use BasilLangevin\InstructorLaravel\Exceptions\LaravelDataValidationException;
-use BasilLangevin\InstructorLaravel\Facades\Instructor as InstructorFacade;
+use BasilLangevin\InstructorLaravel\Facades\Instructor;
 use BasilLangevin\InstructorLaravel\Tests\Support\Data\BirdData;
-use BasilLangevin\InstructorLaravel\Tests\Support\Facades\ResponseBuilder;
 use Spatie\LaravelData\Attributes\Validation\Rule;
 use Spatie\LaravelData\Data;
 
 covers(ValidatesResponse::class);
 
-beforeEach(function () {
-    $this->instructor = InstructorFacade::make();
-
-    $reflection = new ReflectionClass($this->instructor);
-    $property = $reflection->getProperty('request');
-    $property->setAccessible(true);
-
-    $this->request = $property->getValue($this->instructor);
-});
-
 it('can validate a response that does not match the schema', function () {
-    ResponseBuilder::fake(['weight_in_grams' => 457]);
+    Instructor::fake(['weight_in_grams' => 457]);
 
-    $this->instructor->withSchema(BirdData::class)
+    Instructor::make()
+        ->withSchema(BirdData::class)
         ->withoutRetries()
         ->generate();
 })->throws(JsonSchemaValidationException::class);
@@ -39,9 +29,10 @@ it('can validate a response that does not match the Laravel Data attributes', fu
         ) {}
     }
 
-    ResponseBuilder::fake(['age' => 101]);
+    Instructor::fake(['age' => 101]);
 
-    $this->instructor->withSchema(LaravelValidatedAttributeData::class)
+    Instructor::make()
+        ->withSchema(LaravelValidatedAttributeData::class)
         ->withoutRetries()
         ->generate();
 })->throws(LaravelDataValidationException::class);
