@@ -16,11 +16,11 @@
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.3",
         "basillangevin/laravel-data-json-schemas": "^1.1",
         "echolabsdev/prism": "^0.34.0",
         "illuminate/contracts": "^10.0||^11.0",
-        "opis/json-schema": "dev-master",
+        "opis/json-schema": "^5.3",
         "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
@@ -73,11 +73,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/BasilLangevin/json-schema"
-        }
-    ]
+    "prefer-stable": true
 }
