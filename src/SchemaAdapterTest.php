@@ -30,6 +30,15 @@ it('can make a schema adapter from a data class name', function () {
         ->toEqual(JsonSchema::toArray(BirdData::class));
 });
 
+it('can make a schema adapter for a collection of a data class name', function () {
+    $schema = SchemaAdapter::makeCollection(BirdData::class);
+
+    expect($schema)
+        ->toBeInstanceOf(SchemaAdapter::class)
+        ->toArray()
+        ->toEqual(JsonSchema::collectToArray(BirdData::class));
+});
+
 it('can make a schema adapter from an array')
     ->expect(fn () => SchemaAdapter::make(['type' => 'object']))
     ->toBeInstanceOf(SchemaAdapter::class)

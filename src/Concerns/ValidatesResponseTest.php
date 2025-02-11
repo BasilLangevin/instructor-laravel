@@ -36,3 +36,26 @@ it('can validate a response that does not match the Laravel Data attributes', fu
         ->withoutRetries()
         ->generate();
 })->throws(LaravelDataValidationException::class);
+
+it('can validate a collection response where one item does not match the Laravel Data attributes', function () {
+    /** We use the #[Rule] attribute because it can't be validated by the JsonSchema validator. */
+    class LaravelValidatedAttributeCollectionData extends Data
+    {
+        public function __construct(
+            #[Rule('max:100')]
+            public int $age,
+        ) {}
+    }
+
+    Instructor::fake([
+        [
+            ['age' => 100],
+            ['age' => 101],
+        ],
+    ]);
+
+    Instructor::make()
+        ->withCollectionSchema(LaravelValidatedAttributeCollectionData::class)
+        ->withoutRetries()
+        ->generate();
+})->throws(LaravelDataValidationException::class);

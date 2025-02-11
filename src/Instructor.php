@@ -9,6 +9,7 @@ use BasilLangevin\InstructorLaravel\Concerns\RetriesRequest;
 use BasilLangevin\InstructorLaravel\Concerns\ValidatesResponse;
 use BasilLangevin\InstructorLaravel\Exceptions\SchemaValidationException;
 use EchoLabs\Prism\Structured\PendingRequest;
+use EchoLabs\Prism\Structured\Response;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
@@ -25,6 +26,11 @@ class Instructor
 
     protected SchemaAdapter $adapter;
 
+    protected bool $isCollection = false;
+
+    /** @var class-string<Collection<int, Data>> */
+    protected string $collectionClass = Collection::class;
+
     public function __construct(
         protected PendingRequest $request,
     ) {
@@ -40,7 +46,24 @@ class Instructor
     public function withSchema(string $schema): self
     {
         $this->schema = $schema;
+        $this->isCollection = false;
         $this->adapter = SchemaAdapter::make($schema);
+
+        $this->request->withSchema($this->adapter);
+
+        return $this;
+    }
+
+    /**
+     * @param  class-string<Data>  $schema
+     * @param  class-string<Collection<int, Data>>  $collectionClass
+     */
+    public function withCollectionSchema(string $schema, string $collectionClass = Collection::class): self
+    {
+        $this->schema = $schema;
+        $this->isCollection = true;
+        $this->collectionClass = $collectionClass;
+        $this->adapter = SchemaAdapter::makeCollection($schema);
 
         $this->request->withSchema($this->adapter);
 
@@ -64,8 +87,26 @@ class Instructor
                 throw $e;
             }
 
-            return $this->schema::from($response->structured);
+            return $this->resolveResponse($response);
         });
+    }
+
+    /**
+     * Transform a Prism response into a Data object or a collection of Data objects.
+     *
+     * @return Data|Collection<int, Data>
+     */
+    protected function resolveResponse(Response $response): Data|Collection
+    {
+        $data = $response->structured;
+
+        if (! $this->isCollection) {
+            return $this->schema::from($data);
+        }
+
+        /** @var array<string, mixed>[] $data */
+        return $this->collectionClass::make($data)
+            ->map(fn (array $data) => $this->schema::from($data));
     }
 
     /**

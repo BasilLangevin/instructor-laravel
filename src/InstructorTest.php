@@ -4,11 +4,13 @@ use BasilLangevin\InstructorLaravel\Exceptions\SchemaValidationException;
 use BasilLangevin\InstructorLaravel\Facades\Instructor as InstructorFacade;
 use BasilLangevin\InstructorLaravel\Instructor;
 use BasilLangevin\InstructorLaravel\SchemaAdapter;
+use BasilLangevin\InstructorLaravel\Tests\Support\Collections\BirdCollection;
 use BasilLangevin\InstructorLaravel\Tests\Support\Data\BirdData;
 use BasilLangevin\LaravelDataJsonSchemas\Facades\JsonSchema;
 use EchoLabs\Prism\Enums\Provider;
 use EchoLabs\Prism\ValueObjects\Messages\AssistantMessage;
 use EchoLabs\Prism\ValueObjects\Messages\UserMessage;
+use Illuminate\Support\Collection;
 
 covers(Instructor::class);
 
@@ -59,16 +61,78 @@ it('can set the schema to a Data class', function () {
         ->toEqual(JsonSchema::toArray(BirdData::class));
 });
 
+it('can set the schema to a collection of a Data class', function () {
+    $fake = InstructorFacade::fake([
+        [
+            ['species' => 'Red-breasted Nuthatch'],
+            ['species' => 'Eastern Bluebird'],
+        ],
+    ]);
+
+    InstructorFacade::make()
+        ->withCollectionSchema(BirdData::class)
+        ->withoutRetries()
+        ->generate();
+
+    expect($fake->request()->schema)
+        ->toBeInstanceOf(SchemaAdapter::class)
+        ->toArray()
+        ->toEqual(JsonSchema::collectToArray(BirdData::class));
+});
+
 describe('generate', function () {
-    it('can generate a response from the provided schema', function () {
+    it('can generate a Data object for the provided schema from a single response', function () {
         InstructorFacade::fake(['species' => 'Barred Owl']);
 
         $result = InstructorFacade::make()
             ->withSchema(BirdData::class)
+            ->withoutRetries()
             ->generate();
 
         expect($result)->toBeInstanceOf(BirdData::class);
         expect($result->species)->toBe('Barred Owl');
+    });
+
+    it('can generate a collection of Data objects for the provided schema from a single response', function () {
+        InstructorFacade::fake([
+            [
+                ['species' => 'Barred Owl'],
+                ['species' => 'Eastern Bluebird'],
+            ],
+        ]);
+
+        $result = InstructorFacade::make()
+            ->withCollectionSchema(BirdData::class)
+            ->withoutRetries()
+            ->generate();
+
+        expect($result)->toBeInstanceOf(Collection::class)
+            ->toHaveCount(2)
+            ->each->toBeInstanceOf(BirdData::class);
+
+        expect($result->first())->species->toBe('Barred Owl');
+        expect($result->last())->species->toBe('Eastern Bluebird');
+    });
+
+    it('can generate a custom collection of Data objects for the provided schema from a single response', function () {
+        InstructorFacade::fake([
+            [
+                ['species' => 'Barred Owl'],
+                ['species' => 'Eastern Bluebird'],
+            ],
+        ]);
+
+        $result = InstructorFacade::make()
+            ->withCollectionSchema(BirdData::class, BirdCollection::class)
+            ->withoutRetries()
+            ->generate();
+
+        expect($result)->toBeInstanceOf(BirdCollection::class)
+            ->toHaveCount(2)
+            ->each->toBeInstanceOf(BirdData::class);
+
+        expect($result->first())->species->toBe('Barred Owl');
+        expect($result->last())->species->toBe('Eastern Bluebird');
     });
 
     it('validates the response against the schema', function () {

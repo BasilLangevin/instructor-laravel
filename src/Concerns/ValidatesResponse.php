@@ -27,7 +27,13 @@ trait ValidatesResponse
         $data = $response->structured;
 
         $this->validateJsonSchema($data);
-        $this->validateDataAttributes($data);
+
+        /** @var array<string, mixed>[] $dataObjects */
+        $dataObjects = $this->isCollection ? $data : [$data];
+
+        foreach ($dataObjects as $dataObject) {
+            $this->validateDataAttributes($dataObject);
+        }
     }
 
     /**
@@ -51,7 +57,6 @@ trait ValidatesResponse
         if ($result->hasError()) {
             throw new JsonSchemaValidationException($result);
         }
-
     }
 
     /**

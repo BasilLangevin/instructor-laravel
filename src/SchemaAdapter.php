@@ -24,6 +24,12 @@ class SchemaAdapter implements PrismSchema
         };
     }
 
+    /** @param  class-string<Data>  $schema */
+    public static function makeCollection(string $schema): self
+    {
+        return new self(JsonSchema::collectToArray($schema));
+    }
+
     /**
      * Since this is a root schema, it doesn't have a name.
      */
