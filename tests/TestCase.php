@@ -6,7 +6,6 @@ use BasilLangevin\InstructorLaravel\InstructorLaravelServiceProvider;
 use BasilLangevin\InstructorLaravel\Services\RetryService;
 use BasilLangevin\InstructorLaravel\Tests\Support\Data\BirdData;
 use BasilLangevin\LaravelDataJsonSchemas\LaravelDataJsonSchemasServiceProvider;
-use Dotenv\Dotenv;
 use Mockery;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\LaravelData\LaravelDataServiceProvider;
@@ -32,13 +31,6 @@ class TestCase extends Orchestra
      */
     protected function getEnvironmentSetUp($app)
     {
-        if (! file_exists(__DIR__.'/../.env.testing')) {
-            return;
-        }
-
-        $dotenv = Dotenv::createImmutable(__DIR__, '/../.env.testing');
-        $dotenv->load();
-
         $config = require __DIR__.'/config/prism.php';
         $app['config']->set('prism', $config);
     }
